@@ -16,6 +16,7 @@ void task_baseInit(void)
     /* …Ë÷√≥Ã–Ú∞Ê±æ */
     sys_set_version("sloop Demo V1.0.0");
 
+#if !defined(WIN32)
     /* gpio ≈‰÷√ */
     gpio_config();
 
@@ -50,6 +51,7 @@ void task_baseInit(void)
     asp_uart6_init();
 
     asp_beep(100);
+#endif
 
     sys_wait(100);
 

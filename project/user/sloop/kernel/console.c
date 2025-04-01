@@ -272,7 +272,7 @@ void system_console(void)
 }
 
 /* ============================================================== */
-
+weak_define(NVIC_SystemReset);
 /* 系统复位 */
 void cmd_reboot(void)
 {
@@ -426,6 +426,7 @@ void cmd_uart(void)
     /* ASCLL 码，直接发送 */
     if (strncmp(str, "-hex", strlen("-hex")) != 0)
     {
+#if !defined(WIN32)
         switch (id)
         {
         case 1:
@@ -456,7 +457,9 @@ void cmd_uart(void)
             sys_error("serial port %d has not been registered", id);
             break;
         }
-
+#else
+       sys_printf(str);
+#endif
         return;
     }
 
@@ -483,6 +486,7 @@ void cmd_uart(void)
         str = str_next(str);
     }
 
+#if !defined(WIN32)
     switch (id)
     {
     case 1:
@@ -513,6 +517,9 @@ void cmd_uart(void)
         sys_error("serial port %d has not been registered", id);
         break;
     }
+#else
+    sys_printf(hex);
+#endif
 }
 
 /* ============================================================== */
@@ -522,6 +529,7 @@ ASCLL 模式： can1 -id 1 hello
 HEX 模式： can1 -id 1 -hex 68 65 6C 6C 6F */
 void cmd_can(void)
 {
+#if !defined(WIN32)
     CanTxMsg msg = {0};
 
     char *str = sys_get_cmd_str();
@@ -664,6 +672,9 @@ void cmd_can(void)
         asp_can1_send(&msg);
     else
         asp_can2_send(&msg);
+#else
+    sys_error("can tx msg");
+#endif
 }
 
 #else /* SYS_CMD_ENABLE */
@@ -729,18 +740,19 @@ void cmd_gpio(void)
     else if (strcmp(str, "input on") == 0)
     {
         /* 开启 GPIO 输入回显 */
-        sys_cycle_start(10, gpio_input_echo);
+        //sys_cycle_start(10, gpio_input_echo);
 
         sys_prt_withFunc("gpio input echo on");
     }
     else if (strcmp(str, "input off") == 0)
     {
         /* 关闭 GPIO 输入回显 */
-        sys_cycle_stop(gpio_input_echo);
+        //sys_cycle_stop(gpio_input_echo);
 
         sys_prt_withFunc("gpio input echo off");
     }
 
+#if !defined(WIN32)
     /* 解析命令 */
     for (int i = 0; i < PIN_NUM; i++)
     {
@@ -756,6 +768,7 @@ void cmd_gpio(void)
             return;
         }
     }
+#endif
 }
 
 /************************** END OF FILE **************************/

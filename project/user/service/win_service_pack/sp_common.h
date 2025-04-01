@@ -1,25 +1,17 @@
 /**
  ******************************************************************************
- * @file    common
+ * @file    sp_common
  * @author  暄暄
  * @date    2024-9-25
- * @brief   公共包含
- * ==可以在此文件添加用户头文件==
+ * @brief   service pack 公共包含
+ * ==此文件用户不应变更==
  *****************************************************************************/
 
-#ifndef __common_H
-#define __common_H
-
-/* ==用户代码区 开始== */
+#ifndef __sp_common_H
+#define __sp_common_H
 
 #include "sloop.h"
-#include "main.h"
-#include "service_api.h"
-#if !defined(WIN32)
-#include "gpio_config.h"
-#endif
-/* ==用户代码区 结束== */
 
-#endif /* __common_H */
+#endif /* __sp_common_H */
 
 /*********************************** END OF FILE ***********************************/

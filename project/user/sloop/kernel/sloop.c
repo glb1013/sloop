@@ -131,11 +131,17 @@ void sloop_init(void)
 /* sloop 系统运行 */
 void sloop(void)
 {
+    SEGGER_RTT_proc();
+
     /* 互斥任务运行 */
     mutex_task_run();
 
+    SEGGER_RTT_proc();
+
     /* 并行任务运行 */
     parallel_task_run();
+
+    SEGGER_RTT_proc();
 }
 
 /* ============================================================== */
@@ -169,14 +175,15 @@ void soft_timer(void)
 /* 系统心跳 */
 void system_heartbeat(void)
 {
-    static int count;
+    static uint32_t count;
 
+#if !defined(WIN32)
     SEGGER_RTT_SetTerminal(1);
 
     sys_prt_var(count);
 
     SEGGER_RTT_SetTerminal(0);
-
+#endif
     count++;
 }
 

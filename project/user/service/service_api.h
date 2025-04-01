@@ -41,7 +41,8 @@ void asp_auto_init_param(void);
 void asp_param_save(void);
 
 /* ============================================================== */
-
+#if defined(WIN32)
+#else
 /* ==CAN1== */
 
 /* CAN MCB ID */
@@ -79,6 +80,7 @@ void asp_can2_receive_callback(CanRxMsg *msg);
 
 /* can 发送数据处理 */
 void asp_can2_send(CanTxMsg *msg);
+#endif
 
 /* ============================================================== */
 

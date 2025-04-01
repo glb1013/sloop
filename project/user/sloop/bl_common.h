@@ -10,8 +10,12 @@
 #ifndef __bl_common_H
 #define __bl_common_H
 
+#if defined(WIN32)
+#else
 #include "stm32f2xx.h"
 #include "SEGGER_RTT.h"
+#endif
+#include "stdint.h"
 #include "string.h"
 #include "math.h"
 #include "stdio.h"
@@ -46,9 +50,13 @@ enum
 typedef void (*pfunc)(void);
 
 /* 弱定义func */
+#if defined(WIN32)
+#define weak_define(func) \
+    extern void func(void)
+#else
 #define weak_define(func) \
     __weak void func(void) {}
-
+#endif
 /* 循环自增，举例：add(i, 6) i = 0->6 循环自增 */
 #define add(i, upper) i = (i == upper) ? 0 : i + 1
 /* 循环自减，举例：sub(i, 6) i = 6->0 循环自减 */
@@ -67,6 +75,37 @@ void print_null(const char *sFormat, ...);
 
 #endif
 
+#if defined(WIN32)
+/* 系统打印（带时间戳），RTT 简化版本 */
+#define sys_printf      printf 
+
+/* 带函数名的打印 */
+#define sys_prt_withFunc(sFormat, ...) sys_printf("<func: %s> "sFormat"\r\n", __func__, ##__VA_ARGS__)
+
+/* 错误日志 */
+#define sys_error(sFormat, ...) sys_prt_withFunc("[error] " sFormat"\r\n", ##__VA_ARGS__)
+
+/* 白色高亮日志，带 === ==== */
+#define sys_focus(sFormat, ...) sys_printf("=== " sFormat " ===\r\n", ##__VA_ARGS__)
+
+/* 白色高亮日志 */
+#define sys_prt_brWhite(sFormat, ...) sys_printf(sFormat"\r\n", ##__VA_ARGS__)
+
+/* 黄色高亮日志 */
+#define sys_prt_brYellow(sFormat, ...) sys_printf(sFormat"\r\n", ##__VA_ARGS__)
+
+/* 打印变量 */
+#define sys_prt_var(var) sys_prt_withFunc(#var " = %d\r\n", (int)var)
+
+/* 打印字符串 */
+#define sys_prt_str(str) sys_prt_withFunc("%s\r\n", str)
+
+/* 打印浮点数 */
+#define sys_prt_float(var) sys_prt_withFunc(#var " = %d.%2d\r\n", (int)var, (int)(var * 1000) % 1000)
+
+/* 连续打印（末尾不带换行），用于不换行连续输出 */
+#define sys_prt_noNewLine(sFormat, ...) sys_printf(sFormat, ##__VA_ARGS__)
+#else
 /* 系统打印（带时间戳），RTT 简化版本 */
 #define sys_printf(sFormat, ...) SEGGER_RTT_printf(0, RTT_CTRL_TEXT_GREEN "\n[%02d %02d:%02d:%02d.%03d] " RTT_CTRL_TEXT_YELLOW sFormat "\n" RTT_CTRL_RESET, \
                                                    sys_get_tick() / 1000 / 60 / 60 / 24,                                                                    \
@@ -102,6 +141,7 @@ void print_null(const char *sFormat, ...);
 
 /* 连续打印（末尾不带换行），用于不换行连续输出 */
 #define sys_prt_noNewLine(sFormat, ...) SEGGER_RTT_printf(0, RTT_CTRL_TEXT_YELLOW sFormat RTT_CTRL_RESET, ##__VA_ARGS__, __func__)
+#endif
 
 /* ============================================================== */
 /* 互斥任务相关服务 */
