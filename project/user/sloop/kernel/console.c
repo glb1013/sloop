@@ -204,7 +204,7 @@ void system_console(void)
         {
             if (sys_cmd_reg[i].callback != NULL)
             {
-                sys_prt_brYellow("%d: %s", i, sys_cmd_reg[i].str);
+                sys_print_brYellow("%d: %s", i, sys_cmd_reg[i].str);
             }
             else
             {
@@ -272,11 +272,11 @@ void system_console(void)
 }
 
 /* ============================================================== */
-weak_define(NVIC_SystemReset);
+weak_define(sys_reboot);
 /* 系统复位 */
 void cmd_reboot(void)
 {
-    sys_timeout_start(10, NVIC_SystemReset);
+    sys_timeout_start(10, sys_reboot);
 }
 
 /* 版本号长度 */
@@ -287,7 +287,7 @@ static char version[VER_LEN + 1];
 /* 查询版本 */
 void cmd_version(void)
 {
-    sys_prt_brYellow("Version: %s, Build Date: %s, %s", version, __DATE__, __TIME__);
+    sys_print_brYellow("Version: %s, Build Date: %s, %s", version, __DATE__, __TIME__);
 }
 
 /* 设置程序版本 */
@@ -301,7 +301,7 @@ void sys_set_version(char *str)
 
     strncpy(version, str, VER_LEN);
 
-    sys_prt_brYellow("version: %s", str);
+    sys_print_brYellow("version: %s", str);
 }
 
 /* 查询程序版本 */
@@ -338,7 +338,7 @@ void cmd_task(void)
     }
     else if (strcmp(str, "-h") == 0)
     {
-        sys_prt_brYellow("e.g. \"task\", \"task on\" or \"task off\"");
+        sys_print_brYellow("e.g. \"task\", \"task on\" or \"task off\"");
     }
 
 #else
@@ -374,7 +374,7 @@ void cmd_cpu(void)
     }
     else if (strcmp(str, "-h") == 0)
     {
-        sys_prt_brYellow("e.g. \"cpu\", \"cpu on\" or \"cpu off\"");
+        sys_print_brYellow("e.g. \"cpu\", \"cpu on\" or \"cpu off\"");
     }
 }
 
@@ -400,7 +400,7 @@ void cmd_uart(void)
     {
         if (strcmp(str, "-h") == 0)
         {
-            sys_prt_brYellow("e.g. \"uart6 hello\" or \"uart6 -hex 68 65 6C 6C 6F\"");
+            sys_print_brYellow("e.g. \"uart6 hello\" or \"uart6 -hex 68 65 6C 6C 6F\"");
 
             return;
         }
@@ -458,7 +458,7 @@ void cmd_uart(void)
             break;
         }
 #else
-       sys_printf(str);
+        sys_printf("uart port%u, send ascii string: %s", id, str);
 #endif
         return;
     }
@@ -518,7 +518,7 @@ void cmd_uart(void)
         break;
     }
 #else
-    sys_printf(hex);
+    sys_printf("uart port%u, send hex data: %s", id, hex);
 #endif
 }
 
@@ -545,7 +545,7 @@ void cmd_can(void)
     {
         if (strcmp(str, "-h") == 0)
         {
-            sys_prt_brYellow("e.g. \"can1 -id 1 hello\" or \"can1 -id 1 -hex 68 65 6C 6C 6F\"");
+            sys_print_brYellow("e.g. \"can1 -id 1 hello\" or \"can1 -id 1 -hex 68 65 6C 6C 6F\"");
 
             return;
         }
@@ -673,7 +673,7 @@ void cmd_can(void)
     else
         asp_can2_send(&msg);
 #else
-    sys_error("can tx msg");
+    sys_printf("can tx msg");
 #endif
 }
 
@@ -733,7 +733,7 @@ void cmd_gpio(void)
 
     if (strcmp(str, "-h") == 0)
     {
-        sys_prt_brYellow("e.g. \"gpio pin_beep H\", \"gpio input on\" or \"gpio input off\"");
+        sys_print_brYellow("e.g. \"gpio pin_beep H\", \"gpio input on\" or \"gpio input off\"");
 
         return;
     }
@@ -742,14 +742,14 @@ void cmd_gpio(void)
         /* 开启 GPIO 输入回显 */
         //sys_cycle_start(10, gpio_input_echo);
 
-        sys_prt_withFunc("gpio input echo on");
+        sys_print_withFunc("gpio input echo on");
     }
     else if (strcmp(str, "input off") == 0)
     {
         /* 关闭 GPIO 输入回显 */
         //sys_cycle_stop(gpio_input_echo);
 
-        sys_prt_withFunc("gpio input echo off");
+        sys_print_withFunc("gpio input echo off");
     }
 
 #if !defined(WIN32)

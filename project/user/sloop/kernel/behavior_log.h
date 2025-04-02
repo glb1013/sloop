@@ -31,7 +31,7 @@ void add_task_name(pfunc task, char *str);
 #define sys_delay(ms)                         \
     do                                        \
     {                                         \
-        sys_prt_withFunc("delay: %d ms", ms); \
+        sys_print_withFunc("delay: %d ms", ms); \
         sys_delay(ms);                        \
     } while (0)
 
@@ -40,14 +40,14 @@ void add_task_name(pfunc task, char *str);
 #define sys_timeout_start(ms, task)                                   \
     do                                                                \
     {                                                                 \
-        sys_prt_withFunc("timeout task start: %d ms, %s", ms, #task); \
+        sys_print_withFunc("timeout task start: %d ms, %s", ms, #task); \
         sys_timeout_start(ms, task);                                  \
     } while (0)
 
 #define sys_timeout_stop(task)                             \
     do                                                     \
     {                                                      \
-        sys_prt_withFunc("timeout task stop:  %s", #task); \
+        sys_print_withFunc("timeout task stop:  %s", #task); \
         sys_timeout_stop(task);                            \
     } while (0)
 
@@ -57,14 +57,14 @@ void add_task_name(pfunc task, char *str);
     do                                                              \
     {                                                               \
         add_task_name(task, #task);                                 \
-        sys_prt_withFunc("cycle task start: %d ms, %s", ms, #task); \
+        sys_print_withFunc("cycle task start: %d ms, %s", ms, #task); \
         sys_cycle_start(ms, task);                                  \
     } while (0)
 
 #define sys_cycle_stop(task)                             \
     do                                                   \
     {                                                    \
-        sys_prt_withFunc("cycle task stop:  %s", #task); \
+        sys_print_withFunc("cycle task stop:  %s", #task); \
         sys_cycle_stop(task);                            \
     } while (0)
 
@@ -74,14 +74,14 @@ void add_task_name(pfunc task, char *str);
     do                                                      \
     {                                                       \
         add_task_name(task, #task);                         \
-        sys_prt_withFunc("parallel task start: %s", #task); \
+        sys_print_withFunc("parallel task start: %s", #task); \
         sys_task_start(task);                               \
     } while (0)
 
 #define sys_task_stop(task)                                 \
     do                                                      \
     {                                                       \
-        sys_prt_withFunc("parallel task stop:  %s", #task); \
+        sys_print_withFunc("parallel task stop:  %s", #task); \
         sys_task_stop(task);                                \
     } while (0)
 
@@ -91,7 +91,7 @@ void add_task_name(pfunc task, char *str);
     do                                      \
     {                                       \
         add_task_name(task, #task);         \
-        sys_prt_withFunc("goto %s", #task); \
+        sys_print_withFunc("goto %s", #task); \
         sys_goto(task);                     \
     } while (0)
 

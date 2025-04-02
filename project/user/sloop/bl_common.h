@@ -77,34 +77,34 @@ void print_null(const char *sFormat, ...);
 
 #if defined(WIN32)
 /* 系统打印（带时间戳），RTT 简化版本 */
-#define sys_printf      printf 
-
-/* 带函数名的打印 */
-#define sys_prt_withFunc(sFormat, ...) sys_printf("<func: %s> "sFormat"\r\n", __func__, ##__VA_ARGS__)
-
-/* 错误日志 */
-#define sys_error(sFormat, ...) sys_prt_withFunc("[error] " sFormat"\r\n", ##__VA_ARGS__)
-
-/* 白色高亮日志，带 === ==== */
-#define sys_focus(sFormat, ...) sys_printf("=== " sFormat " ===\r\n", ##__VA_ARGS__)
-
-/* 白色高亮日志 */
-#define sys_prt_brWhite(sFormat, ...) sys_printf(sFormat"\r\n", ##__VA_ARGS__)
-
-/* 黄色高亮日志 */
-#define sys_prt_brYellow(sFormat, ...) sys_printf(sFormat"\r\n", ##__VA_ARGS__)
-
-/* 打印变量 */
-#define sys_prt_var(var) sys_prt_withFunc(#var " = %d\r\n", (int)var)
-
-/* 打印字符串 */
-#define sys_prt_str(str) sys_prt_withFunc("%s\r\n", str)
-
-/* 打印浮点数 */
-#define sys_prt_float(var) sys_prt_withFunc(#var " = %d.%2d\r\n", (int)var, (int)(var * 1000) % 1000)
+#define sys_printf(sFormat, ...)            printf(sFormat"\r\n", ##__VA_ARGS__)
 
 /* 连续打印（末尾不带换行），用于不换行连续输出 */
-#define sys_prt_noNewLine(sFormat, ...) sys_printf(sFormat, ##__VA_ARGS__)
+#define sys_print_noNewLine(sFormat, ...)   printf(sFormat, ##__VA_ARGS__)
+
+/* 带函数名的打印 */
+#define sys_print_withFunc(sFormat, ...)    sys_printf("<%s %d> "sFormat, __func__, __LINE__ , ##__VA_ARGS__)
+
+/* 错误日志 */
+#define sys_error(sFormat, ...)             sys_print_withFunc("[error] " sFormat, ##__VA_ARGS__)
+
+/* 白色高亮日志，带 === ==== */
+#define sys_focus(sFormat, ...)             sys_print_withFunc("===>> " sFormat " <<===", ##__VA_ARGS__)
+
+/* 白色高亮日志 */
+#define sys_print_brWhite(sFormat, ...)     sys_print_withFunc(sFormat, ##__VA_ARGS__)
+
+/* 黄色高亮日志 */
+#define sys_print_brYellow(sFormat, ...)    sys_print_withFunc(sFormat, ##__VA_ARGS__)
+
+/* 打印变量 */
+#define sys_print_var(var)                  sys_print_withFunc(#var " = %d", (int)var)
+
+/* 打印字符串 */
+#define sys_print_str(str)                  sys_print_withFunc("%s", str)
+
+/* 打印浮点数 */
+#define sys_print_float(var)                sys_print_withFunc(#var " = %d.%2d\r\n", (int)var, (int)(var * 1000) % 1000)
 #else
 /* 系统打印（带时间戳），RTT 简化版本 */
 #define sys_printf(sFormat, ...) SEGGER_RTT_printf(0, RTT_CTRL_TEXT_GREEN "\n[%02d %02d:%02d:%02d.%03d] " RTT_CTRL_TEXT_YELLOW sFormat "\n" RTT_CTRL_RESET, \
@@ -116,28 +116,28 @@ void print_null(const char *sFormat, ...);
                                                    ##__VA_ARGS__, __func__)
 
 /* 带函数名的打印 */
-#define sys_prt_withFunc(sFormat, ...) sys_printf(sFormat RTT_CTRL_TEXT_GREEN " <func: %s>" RTT_CTRL_RESET, ##__VA_ARGS__, __func__)
+#define sys_print_withFunc(sFormat, ...) sys_printf(sFormat RTT_CTRL_TEXT_GREEN " <func: %s>" RTT_CTRL_RESET, ##__VA_ARGS__, __func__)
 
 /* 错误日志 */
-#define sys_error(sFormat, ...) sys_prt_withFunc(RTT_CTRL_TEXT_BRIGHT_RED "[error] " sFormat RTT_CTRL_RESET, ##__VA_ARGS__)
+#define sys_error(sFormat, ...) sys_print_withFunc(RTT_CTRL_TEXT_BRIGHT_RED "[error] " sFormat RTT_CTRL_RESET, ##__VA_ARGS__)
 
 /* 白色高亮日志，带 === ==== */
 #define sys_focus(sFormat, ...) sys_printf(RTT_CTRL_TEXT_BRIGHT_WHITE "=== " sFormat " ===" RTT_CTRL_RESET, ##__VA_ARGS__)
 
 /* 白色高亮日志 */
-#define sys_prt_brWhite(sFormat, ...) sys_printf(RTT_CTRL_TEXT_BRIGHT_WHITE sFormat RTT_CTRL_RESET, ##__VA_ARGS__)
+#define sys_print_brWhite(sFormat, ...) sys_printf(RTT_CTRL_TEXT_BRIGHT_WHITE sFormat RTT_CTRL_RESET, ##__VA_ARGS__)
 
 /* 黄色高亮日志 */
-#define sys_prt_brYellow(sFormat, ...) sys_printf(RTT_CTRL_TEXT_BRIGHT_YELLOW sFormat RTT_CTRL_RESET, ##__VA_ARGS__)
+#define sys_print_brYellow(sFormat, ...) sys_printf(RTT_CTRL_TEXT_BRIGHT_YELLOW sFormat RTT_CTRL_RESET, ##__VA_ARGS__)
 
 /* 打印变量 */
-#define sys_prt_var(var) sys_prt_withFunc(#var " = %d", (int)var)
+#define sys_prt_var(var) sys_print_withFunc(#var " = %d", (int)var)
 
 /* 打印字符串 */
-#define sys_prt_str(str) sys_prt_withFunc("%s", str)
+#define sys_prt_str(str) sys_print_withFunc("%s", str)
 
 /* 打印浮点数 */
-#define sys_prt_float(var) sys_prt_withFunc(#var " = %d.%2d", (int)var, (int)(var * 1000) % 1000)
+#define sys_prt_float(var) sys_print_withFunc(#var " = %d.%2d", (int)var, (int)(var * 1000) % 1000)
 
 /* 连续打印（末尾不带换行），用于不换行连续输出 */
 #define sys_prt_noNewLine(sFormat, ...) SEGGER_RTT_printf(0, RTT_CTRL_TEXT_YELLOW sFormat RTT_CTRL_RESET, ##__VA_ARGS__, __func__)

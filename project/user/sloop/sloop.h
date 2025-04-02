@@ -15,7 +15,7 @@
 /* sloop 系统初始化 */
 void sloop_init(void);
 /* sloop 系统运行 */
-void sloop(void);
+void sloop_run(void);
 
 /* 获取时间戳 */
 uint32_t sys_get_tick(void);

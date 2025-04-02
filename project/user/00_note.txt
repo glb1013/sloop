@@ -1,0 +1,68 @@
+
+1. task
+(1)
+typedef struct
+{
+    pfunc task;
+
+    char str[MAX_CHAR + 1];
+
+    /* 任务单周期运行时间,单位0.1us */
+    int _us;
+
+    int sum;
+
+    int count;
+
+} task_data_typ;
+
+static task_data_typ task_data[TASK_DATA_LIMIT] = {
+    [0].task = soft_timer,
+    [0].str = "soft_timer",
+};
+task_data保存parallel task和cyclic task；
+
+(2)
+void add_task_name(pfunc task, char *str)
+task_data_typ *find_task_data(pfunc task)
+void update_task_us(pfunc task, uint16_t us_start)
+void update_cycle_us(pfunc task, uint16_t us_start)
+
+2. timeout/cyclic/multiple task
+(1) 
+在tick中断上下文执行；
+run的时候，先保存到backup_reg，然后执行；防止运行期间，start/stop引发的修改；
+判断超时时间到达才运行，运行完毕后更新tick_start，等待下一次超时；
+
+
+(2)
+
+(3)
+
+3. 并行任务
+(1) 
+在sloop_run中运行；
+在sys_wait/sys_wait_bare时，运行；
+
+(2)task ptr:
+pfunc task_reg[PARALLEL_TASK_LIMIT];
+
+void sys_task_stop(pfunc task)
+void sys_task_start(pfunc task)
+void parallel_task_run(void)
+
+
+4. 互斥任务
+（1）
+只在sloop_run中运行；
+
+（2）
+pfunc run_task; //
+pfunc pre_task; //
+
+
+5. cpu_load
+
+
+6. 
+

@@ -42,8 +42,8 @@
     static name1##_typ backup_reg[name2##_LIMIT]; \
     memcpy(backup_reg, name1##_reg, sizeof backup_reg);
 
-void print_null(const char *sFormat, ...) {}
 
+ /* ============================================================== */
 /* 超时任务运行 */
 void timeout_run(void);
 /* 周期任务运行 */
@@ -59,7 +59,6 @@ void mutex_task_run(void);
 /* 软件定定时器 */
 void soft_timer(void);
 
-/* ============================================================== */
 
 /* 基础时钟初始化 */
 weak_define(mcu_base_timer_init);
@@ -82,6 +81,7 @@ void update_cycle_us(pfunc task, uint16_t us_start);
 /* 单次任务打印 */
 void once_task_print(pfunc task);
 
+/* ============================================================== */
 static volatile uint32_t tick;
 
 static int loop;
@@ -91,13 +91,16 @@ static int load;
 static int loop_us;
 
 /* ============================================================== */
+void print_null(const char* sFormat, ...)
+{
+}
 
 /* sloop 系统初始化 */
 void sloop_init(void)
 {
-    sys_prt_brYellow("==================================");
-    sys_prt_brYellow("============ sloop ============");
-    sys_prt_brYellow("==================================");
+    sys_print_brYellow("==================================");
+    sys_print_brYellow("============ sloop ===============");
+    sys_print_brYellow("==================================");
 
     mcu_base_timer_init();
 
@@ -115,21 +118,17 @@ void sloop_init(void)
 
     /* 启用系统心跳 */
     sys_cycle_start(1000, system_heartbeat);
-
-    sys_prt_withFunc("system heartbeat start");
+    sys_print_withFunc("system heartbeat start!!!");
 
 #if SYS_CMD_ENABLE
-
     /* 启用系统控制台 */
     sys_cycle_start(100, system_console);
-
-    sys_prt_withFunc("system console start");
-
+    sys_print_withFunc("system console start!!!");
 #endif
 }
 
 /* sloop 系统运行 */
-void sloop(void)
+void sloop_run(void)
 {
     SEGGER_RTT_proc();
 
@@ -958,7 +957,7 @@ void sys_wait_break(void)
 {
     break_wait = 1;
 
-    sys_printf("break wait");
+    bhv_prt("break wait");
 }
 
 /* 忽略等待，会继续执行等待后的操作 */
@@ -966,7 +965,7 @@ void sys_wait_continue(void)
 {
     _continue = 1;
 
-    sys_printf("ignore wait and continue");
+    bhv_prt("ignore wait and continue");
 }
 
 /* ============================================================== */
@@ -993,10 +992,10 @@ typedef struct
 } task_data_typ;
 
 static task_data_typ task_data[TASK_DATA_LIMIT] = {
-
-    [0].task = soft_timer,
-    [0].str = "soft_timer",
-
+    { //0
+        .task = soft_timer,
+        .str = "soft_timer",
+    },
 };
 
 /* 任务名加入注册表 */
@@ -1119,64 +1118,67 @@ void update_cycle_us(pfunc task, uint16_t us_start)
 /* 打印运行中的任务 */
 void task_print(void)
 {
-    sys_prt_brWhite("====== Currently running tasks ======");
+    char* str;
+    int _us;
+    int ms;
+    int i;
+    int count;
+    task_data_typ* task;
 
-    sys_focus("parallel tasks:");
-
-    int count = 0;
+    sys_print_brWhite("====== Currently running tasks ======");
 
     /* 打印并行任务 */
-    for (int i = 0; i < PARALLEL_TASK_LIMIT; i++)
+    sys_focus("parallel tasks:");
+    for (count = 0, i = 0; i < PARALLEL_TASK_LIMIT; i++)
     {
         if (task_reg[i] == NULL)
             continue;
 
-        char *str = find_task_data(task_reg[i])->str;
-
+        task = find_task_data(task_reg[i]);
+        str = task->str;
         if (str == NULL)
             continue;
 
         count++;
 
-        int _us = find_task_data(task_reg[i])->_us;
-
-        sys_prt_brYellow("%d: %s, cycle: %d.%d us", count, str, _us / 10, _us % 10);
+        _us = task->_us;
+        sys_print_brYellow("  [%d] %s, cycle: %d.%d us", count, str, _us / 10, _us % 10);
     }
 
-    sys_focus("cycle tasks:");
-
-    count = 0;
-
     /* 打印周期任务 */
-    for (int i = 0; i < CYCLE_LIMIT; i++)
+    sys_focus("cycle tasks:");
+    for (count = 0, i = 0; i < CYCLE_LIMIT; i++)
     {
         if (cycle_reg[i].callback == NULL)
             continue;
 
-        char *str = find_task_data(cycle_reg[i].callback)->str;
-
-        int ms = cycle_reg[i].delay_ms;
-
+        task = find_task_data(cycle_reg[i].callback);
+        str = task->str;
         if (str == NULL)
             continue;
 
         count++;
 
-        int _us = find_task_data(cycle_reg[i].callback)->_us;
+        ms = cycle_reg[i].delay_ms;
+        _us = task->_us;
 
-        sys_prt_brYellow("%d: %s, period: %d ms, cycle: %d.%d us", count, str, ms, _us / 10, _us % 10);
+        sys_print_brYellow("  [%d] %s, period: %d ms, cycle: %d.%d us", count, str, ms, _us / 10, _us % 10);
     }
 
-    char *str = find_task_data(run_task)->str;
-
-    int _us = find_task_data(run_task)->_us;
 
     /* 打印互斥任务 */
     sys_focus("mutex task:");
+    task = find_task_data(run_task);
+    str = task->str;
+    _us = task->_us;
+    sys_print_brYellow(">>>>run_task: %s, cycle: %d.%d us", str, _us / 10, _us % 10);
 
-    sys_prt_brYellow("%s, cycle: %d.%d us", str, _us / 10, _us % 10);
+    task = find_task_data(pre_task);
+    str = task->str;
+    _us = task->_us;
+    sys_print_brYellow(">>>>pre_task: %s, cycle: %d.%d us", str, _us / 10, _us % 10);
 
-    sys_prt_brYellow("cpu load: %2d.%d%%, average loop time: %d.%d us", load / 10, load % 10, loop_us / 10, loop_us % 10);
+    sys_print_brYellow(">>>>cur cpu load: %2d.%d%%, average loop time: %d.%d us", load / 10, load % 10, loop_us / 10, loop_us % 10);
 }
 
 /* 单次任务打印 */
@@ -1202,7 +1204,7 @@ void once_task_print(pfunc task) {}
 /* cpu 打印 */
 void cpu_print(void)
 {
-    sys_prt_brYellow("cpu load: %2d.%d%%, average loop time: %d.%d us", load / 10, load % 10, loop_us / 10, loop_us % 10);
+    sys_print_brYellow("cpu load: %2d.%d%%, average loop time: %d.%d us", load / 10, load % 10, loop_us / 10, loop_us % 10);
 }
 
 /************************** END OF FILE **************************/

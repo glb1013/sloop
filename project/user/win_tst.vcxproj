@@ -39,6 +39,9 @@
     <ClCompile Include="sloop\kernel\console.c" />
     <ClCompile Include="sloop\kernel\sloop.c" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="00_note.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
