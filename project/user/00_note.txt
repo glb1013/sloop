@@ -30,8 +30,8 @@ void update_cycle_us(pfunc task, uint16_t us_start)
 
 2. timeout/cyclic/multiple task
 (1) 
-在tick中断上下文执行；
-run的时候，先保存到backup_reg，然后执行；防止运行期间，start/stop引发的修改；
+tick中断添加soft_timer到once_task，在parallel_task上下文调用once_task_run()执行这三个task类型；
+once_task_run的时候，先保存到backup_reg，然后执行；防止运行期间，start/stop引发的修改；
 判断超时时间到达才运行，运行完毕后更新tick_start，等待下一次超时；
 
 

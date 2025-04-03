@@ -1165,6 +1165,30 @@ void task_print(void)
         sys_print_brYellow("  [%d] %s, period: %d ms, cycle: %d.%d us", count, str, ms, _us / 10, _us % 10);
     }
 
+    sys_focus("multiple tasks:");
+    for (count = 0, i = 0; i < MULTIPLE_LIMIT; i++)
+    {
+        if (multiple_reg[i].callback == NULL)
+            continue;
+        uint32_t tick_start;
+
+        int delay_ms;
+
+        int num;
+
+        sys_print_brYellow("  [%d] func:%08x, start/dly/num: %u %d %d",
+            multiple_reg[i].callback, multiple_reg[i].tick_start, multiple_reg[i].delay_ms, multiple_reg[i].num);
+    }
+
+    sys_focus("timeout tasks:");
+    for (count = 0, i = 0; i < TIMEOUT_LIMIT; i++)
+    {
+        if (timeout_reg[i].callback == NULL)
+            continue;
+
+        sys_print_brYellow("  [%d] func:%08x, start/dly/num: %u %d",
+            timeout_reg[i].callback, timeout_reg[i].tick_start, timeout_reg[i].delay_ms);
+    }
 
     /* ´òÓ¡»¥³âÈÎÎñ */
     sys_focus("mutex task:");
